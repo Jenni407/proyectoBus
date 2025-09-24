@@ -1,0 +1,34 @@
+<section class="rutas-section">
+    <h2 class="section-title">Nuestras rutas</h2>
+    <p>Descubre nuestras rutas.</p>
+  </section>
+  
+  <mat-card class="carousel-card">
+  <div class ="Carousel-controls">
+
+      <!-- Botón izquierdo -->
+    <button mat-icon-button class="carousel-button" (click)="prev()" [disabled]="currentIndex === 0">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <div class="info-grid">
+      <div class = "info-card" *ngFor="let ruta of rutasVisibles">
+          <h3>{{ ruta.titulo}}</h3>
+          <img [src]="ruta.imagen" [alt]="ruta.titulo"/>
+          <p><b>Duración:</b> {{ruta.duracion}}</p>
+          <p><b>Salidas</b> {{ruta.salidas}}</p>
+          <p><b>Sevicios:</b> {{ruta.servicios}}</p>
+          <button routerLink="boletos" routerLinkActive="active" mat-raised-button color="primary">Comprar boleto</button>
+      </div>
+    </div>
+
+    <!-- Botón derecho -->
+    <button mat-icon-button class="carousel-button" (click)="next()" [disabled]="currentIndex + itemsPerPage >= rutas.length">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+  </mat-card>
+  
+
+  
+       

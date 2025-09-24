@@ -1,0 +1,37 @@
+* {
+    box-sizing: border-box;
+  }
+
+.mat-stepper-horizontal {
+    margin-top: 8px;
+  }
+  
+  .mat-mdc-form-field {
+    margin-top: 16px;
+    width: 100%;
+  }
+  
+  /* Grid de información */
+  .info-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    justify-content: center;
+    margin-top: 200px;
+    margin-bottom: 40px;
+}
+
+.info-card {
+background-color: #f5f5f5;
+border-right-width: 5px solid #3f15d4;
+padding: 20px;
+width: 100%;
+max-width: 1000px;
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+transition: transform 0.3s ease;
+}
+
+.example-section {
+    margin: 12px 0;
+  }

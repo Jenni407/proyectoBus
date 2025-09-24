@@ -1,0 +1,62 @@
+.menu-header {
+    position: fixed; /* Fija el menú en la parte superior */
+    top: 0;
+    width: 100%;
+    background: linear-gradient(90deg,rgb(163, 187, 231), #9f9bc4); /* azul degradado elegante */
+    color: rgb(0, 29, 124);
+    text-align: center;
+    padding: 1rem 0;
+    box-shadow: 0 2px 8px rgba(218, 193, 193, 0.2);
+    z-index: 1000;
+    max-height:100px;
+  }
+
+  .menu-title {
+    display: flex;              /*  Coloca logo y texto uno al lado del otro*/
+    align-items: center;        /* Alinea verticalmente el logo con el texto */
+    gap: 10px;                 /*  Espacio entre el logo y el texto */
+    text-align: start;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 25px;  
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  
+  .menu-nav {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;               /* Espacio entre los enlaces */
+    margin-top: 0.5rem;
+  }
+  
+  .menu-nav a {   
+    display: flex; 
+    color: rgb(42, 5, 173);
+   align-items: center; /* alinea icono y texto */
+    gap: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1rem;
+    transition: color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .menu-nav a:hover {
+    color: #f3d83f; /* dorado al pasar el mouse */
+    transform: translateY(-2px);
+  }
+  
+  .menu-nav a.active {
+    border-bottom: 2px solid #ffd700;
+    padding-bottom: 2px;
+  }
+  
+ .icono {
+    font-size: 1.5rem; /* Tamaño del icono */
+    vertical-align: middle; /* Alinea el icono con el texto */
+    color: rgb(7, 6, 12);
+  }
+  
+ 
