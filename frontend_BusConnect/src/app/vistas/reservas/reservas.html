@@ -1,1 +1,18 @@
-<p>reservas works!</p>
+<div class="container">
+    <mat-card class="resumen-card">
+      <h2> Reserva confirmada</h2>
+    
+      <p><strong>Nombre:</strong> {{ data.nombre }}</p>
+      <p><strong>DPI/Pasaporte:</strong> {{ data.dpi }}</p>
+      <p><strong>Teléfono:</strong> {{ data.telefono }}</p>
+      <p><strong>Origen:</strong> {{ data.from }}</p>
+      <p><strong>Destino:</strong> {{ data.to }}</p>
+      <p><strong>Fecha:</strong> {{ data.fecha | date:'fullDate' }}</p>
+      <p><strong>Asiento:</strong> {{ data.asiento }}</p>
+      <p><strong>Total a pagar:</strong> Q125</p>
+
+    </mat-card>
+
+ </div>
+  
+  

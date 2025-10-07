@@ -1,11 +1,9 @@
-<section class="rutas-section">
-    <h2 class="section-title">Nuestras rutas</h2>
-    <p>Descubre nuestras rutas.</p>
-  </section>
+<div class = main-content>
+    <h2 class="section-title">Descubre nuestras rutas</h2>
   
   <mat-card class="carousel-card">
   <div class ="Carousel-controls">
-
+    
       <!-- Botón izquierdo -->
     <button mat-icon-button class="carousel-button" (click)="prev()" [disabled]="currentIndex === 0">
       <mat-icon>chevron_left</mat-icon>
@@ -18,7 +16,7 @@
           <p><b>Duración:</b> {{ruta.duracion}}</p>
           <p><b>Salidas</b> {{ruta.salidas}}</p>
           <p><b>Sevicios:</b> {{ruta.servicios}}</p>
-          <button routerLink="boletos" routerLinkActive="active" mat-raised-button color="primary">Comprar boleto</button>
+          <button mat-raised-button color="primary" [routerLink]="['/boletos']" class ="button-boleto">Comprar Boleto</button>
       </div>
     </div>
 
@@ -28,6 +26,7 @@
     </button>
   </div>
   </mat-card>
+</div>
   
 
   
