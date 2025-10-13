@@ -18,13 +18,13 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrls: ['./reservas.css']
 })
 export class Reservas {
-  data: any;
+ pasajeros: any[] = [];
+ data: any = {};
 
-  constructor(private router: Router) {
-    const nav = this.router.getCurrentNavigation();
-    this.data = nav?.extras?.state || {};
-    
-  }
+ constructor(private router: Router) {
+  const nav = this.router.getCurrentNavigation();
+  this.data = nav?.extras?.state || {};
+}
 
- }
+}
 

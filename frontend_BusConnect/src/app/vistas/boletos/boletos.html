@@ -62,7 +62,29 @@
             </form>
           </mat-step>
 
-          <!-- STEP 4: Selección de asiento -->
+<!-- STEP: Selección de Bus -->
+<mat-step [stepControl]="busFormGroup">
+  <form [formGroup]="busFormGroup">
+    <ng-template matStepLabel>Bus</ng-template>
+
+    <div class="payment-section">
+    <mat-form-field class="control-full-width">
+      <mat-label>Bus</mat-label>
+      <mat-select formControlName="bus" required>
+        <mat-option *ngFor="let bus of availableBuses" [value]="bus.id">{{ bus.name }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="busFormGroup.get('bus')?.hasError('required')">Seleccione un bus</mat-error>
+    </mat-form-field>
+    </div>
+
+    <div class = "step-buttons">
+      <button matButton matStepperPrevious>Regresar</button>
+      <button matButton matStepperNext>Siguiente</button>
+    </div>
+  </form>
+</mat-step>
+
+          <!-- STEP: Selección de asiento -->
           <mat-step>
             <ng-template matStepLabel>Asientos</ng-template>
     
@@ -82,45 +104,60 @@
               <span class="legend available">🟩 Disponible</span>
               <span class="legend occupied">🟥 Ocupada</span>
               <span class="legend reserved">🟨 Reservada</span>
-              <span class="legend held">🟦 Apartada</span>
             </div>
     
             <div class = "step-buttons">
               <button mat-button matStepperPrevious>Regresar</button>
-              <button mat-button matStepperNext [disabled]="!selectedSeat">Siguiente</button>
+              <button mat-button [disabled]="selectedSeats.length === 0" (click)="onSeatsNext()">
+
+                Siguiente
+              </button>
+              
             </div>
           </mat-step>
     
           <!-- STEP Datos-->
           <mat-step>
             <ng-template matStepLabel>Datos</ng-template>
-           
-            <div class="payment-section">
-    <h3>Datos del Viajero</h3>
 
-    <form [formGroup]="passengerFormGroup">
-      <mat-form-field class="control-full-width">
-        <mat-label>Nombre</mat-label>
-        <input matInput formControlName="name" placeholder="Apellido, Nombre">
-        <mat-error *ngIf="passengerFormGroup.get('name')?.hasError('required')">Este campo es obligatorio</mat-error>
-      </mat-form-field>
+            <form [formGroup]="passengerFormGroup">
+            <div class="section-form">
+              <h3>Datos de los Pasajeros</h3>
 
-      <mat-form-field class="control-full-width">
-        <mat-label>DPI o Pasaporte</mat-label>
-        <input matInput formControlName="id">
-        <mat-error *ngIf="passengerFormGroup.get('id')?.hasError('required')">Este campo es obligatorio</mat-error>
-      </mat-form-field>
+              <div formArrayName="passengers" class="passenger-grid"  >
+              <div *ngFor="let form of passengerFormArray.controls; let i = index" [formGroup]="form" class="passenger-form">
+                <h4>Pasajero Asiento #{{ selectedSeats[i] }}</h4>
+
+              <mat-form-field appearance="fill" class="control-compact">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="name" placeholder="Apellido, Nombre">
+                <mat-error *ngIf="form.get('name')?.hasError('required')">Este campo es obligatorio</mat-error>
+              </mat-form-field>
+        
+              <mat-form-field appearance="fill" class="control-compact">
+                <mat-label>DPI o Pasaporte</mat-label>
+                <input matInput formControlName="id">
+                <mat-error *ngIf="form.get('id')?.hasError('required')">Este campo es obligatorio</mat-error>
+              </mat-form-field>
+            
+              <mat-form-field  appearance="fill" class="control-compact">
+                <mat-label>Celular</mat-label>
+                <input matInput formControlName="phone">
+                <mat-error *ngIf="form.get('phone')?.hasError('required')">Este campo es obligatorio</mat-error>
+                <mat-error *ngIf="form.get('phone')?.hasError('pattern')">Debe tener 8 dígitos</mat-error>
+              </mat-form-field>
+              <hr>
+              </div>
+            </div>
+            </div>
     
-      <mat-form-field class="control-full-width">
-        <mat-label>Celular</mat-label>
-        <input matInput formControlName="phone">
-        <mat-error *ngIf="passengerFormGroup.get('phone')?.hasError('required')">Este campo es obligatorio</mat-error>
-        <mat-error *ngIf="passengerFormGroup.get('phone')?.hasError('pattern')">Debe tener 8 dígitos</mat-error>
-      </mat-form-field>
-    </form>
+            <div class="timer" *ngIf="!paymentConfirmed">
+              Tiempo restante: <strong>{{ countdown }}</strong>
             </div>
 
-              <div class = "step-buttons">
+            </form>
+
+            <div class = "step-buttons">
               <button mat-button matStepperPrevious>Regresar</button>
               <button matButton matStepperNext>Siguiente</button>
             </div>
@@ -129,28 +166,63 @@
              <!-- STEP Pago -->
              <mat-step>
               <ng-template matStepLabel>Pago</ng-template>
+              <form #paymentForm="ngForm">
               <div class="payment-section">
                 <h3>Boletos</h3>
-                <p><strong>Nombre:</strong> {{ passengerFormGroup.get('name')?.value }}</p>
-                <p><strong>DPI/Pasaporte:</strong> {{ passengerFormGroup.get('id')?.value }}</p>
-                <p><strong>Celular:</strong> {{ passengerFormGroup.get('phone')?.value }}</p>
+                
+                <div *ngFor="let form of passengerFormArray.controls; let i = index" [formGroup]="form">
+                <p><strong>Asiento:</strong> {{ selectedSeats[i] }}</p>
+                <p><strong>Nombre:</strong> {{ form.get('name')?.value }}</p>
+                <p><strong>DPI/Pasaporte:</strong> {{ form.get('id')?.value }}</p>
+                <p><strong>Celular:</strong> {{ form.get('phone')?.value }}</p>
                 <p><strong>Origen:</strong> {{ secondFormGroup.get('fromCtrl')?.value }}</p>
                 <p><strong>Destino:</strong> {{ secondFormGroup.get('toCtrl')?.value }}</p>
                 <p><strong>Fecha:</strong> {{ thirdFormGroup.get('date')?.value | date }}</p>
-                <p><strong>Asiento:</strong> {{ selectedSeat }}</p>
+                <p><strong>Bus:</strong> {{ getSelectedBusName() }}</p>
+                <p><strong>Asiento:</strong> {{ selectedSeats[i] }}</p>
                 <p><strong>Total a pagar:</strong> Q125</p>
-                <div class="timer">
-                  Tiempo restante: <span id="countdown">{{ countdown }}</span>
-                </div>
-      
-                <button mat-raised-button color="warn" class="pay-button" (click)="paySeat()">Pagar Boleto</button>
-                <div *ngIf="paymentConfirmed" class="confirmation-message">✅ Pago confirmado</div>
+                <hr>
               </div>
-      
-              <div class = "step-buttons">
-                <button mat-button matStepperPrevious>Regresar</button>
-                <button mat-button matStepperNext [disabled]="!paymentConfirmed">Finalizar</button>
+
+              <mat-form-field class="control-full-width">
+                <mat-label>Correo electrónico</mat-label>
+                <input matInput [(ngModel)]="email" name="email" required email>
+              </mat-form-field>
+              
+              <mat-form-field class="control-compact">
+                <mat-label>Número de tarjeta</mat-label>
+                <input matInput [(ngModel)]="cardInfo.cardNumber" name="cardNumber" required pattern="^[0-9]{16}$">
+              </mat-form-field>
+
+              <div class="row-two">
+                <mat-form-field class="control-compact half">
+                  <mat-label>MM/YY</mat-label>
+                  <input matInput [(ngModel)]="cardInfo.expiry" name="expiry" required pattern="^(0[1-9]|1[0-2])\/\d{2}$">
+                </mat-form-field>
+
+                <mat-form-field class="control-compact half">
+                  <mat-label>CVV</mat-label>
+                  <input matInput [(ngModel)]="cardInfo.cvv" name="cvv" required pattern="^[0-9]{3}$">
+                </mat-form-field>
               </div>
+              
+              <div class="timer"*ngIf="!paymentConfirmed">
+                Tiempo restante: <strong>{{ countdown }}</strong>
+              </div>
+              <button mat-raised-button color="warn"
+                      (click)="paySeat()"
+                      [disabled]="paymentConfirmed || !paymentForm.form.valid">
+                Pagar Boleto
+              </button>
+              <div *ngIf="paymentConfirmed" class="confirmation-message">
+                ✅ Pago confirmado
+              </div>
+            </div>
+          </form>
+          <div class="step-buttons">
+            <button mat-button matStepperPrevious>Regresar</button>
+            <button mat-button (click)="stepper.next()" [disabled]="!paymentConfirmed">Finalizar</button>
+          </div>
             </mat-step>
       
           <!-- STEP 6: Final -->
@@ -160,10 +232,10 @@
 
             <div class = "step-buttons">
               <button mat-button matStepperPrevious>Atrás</button>
-              <button mat-button (click)="resetStepper()">Reiniciar</button>
+              <button mat-raised-button color="primary" (click)="verReserva()" class="button-reserva">
+                Ver Reserva
+              </button>
             </div>
-
-            <button mat-raised-button color="primary" [routerLink]="['/reservas']" class ="button-reserva">Ver Reserva</button>
           </mat-step>
     
         </mat-stepper>
