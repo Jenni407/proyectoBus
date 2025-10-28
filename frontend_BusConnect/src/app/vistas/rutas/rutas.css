@@ -1,9 +1,9 @@
 .main-content {
-  margin-top: 120px; /* para separar del menú */
   padding: 20px;
 }
 .section-title{
   text-align: center;
+  color: #0d47a1
 }
 
 .info-grid {
@@ -13,8 +13,14 @@
   justify-content: center;
   align-items: stretch;
   height: 100%;
-  flex-wrap: nowrap; /* evita que se bajen a otra línea */
-  overflow: hidden; /* evita scroll vertical si se salen */
+  flex-wrap: wrap; /* evita que se bajen a otra línea */
+  overflow: visible; /* evita scroll vertical si se salen */
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.info-grid.fade-out {
+  opacity: 0;
 }
 
 .info-card {
@@ -24,7 +30,11 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
   border-radius: 8px;
-  width: 300px;
+  width: 310px;
+}
+.info-card h3 {
+  margin-top: 0;
+  color: #03275e;
 }
 
 .info-card:hover {
@@ -65,4 +75,21 @@ gap: 10px;/*espacio entre los elementos*/
 .control-compact {
   width: 100%;
   margin-bottom: 12px;
+}
+
+.info-card button.button-boleto {
+  margin-top: 10px;
+  background-color:  #03275e;
+  color:#ffffff; 
+  text-align: center;
+}
+.info-card button.button-boleto:hover {
+  background-color: #0d47a1;
+}
+
+@media (max-width: 768px) {
+  .info-card {
+    width: 90%;                 /* se adapta al móvil */
+    max-width: 400px;
+  }
 }

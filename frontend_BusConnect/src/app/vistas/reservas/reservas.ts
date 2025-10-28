@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router'; 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-reservas',
@@ -12,9 +12,11 @@ import { MatButtonModule } from '@angular/material/button';
     CommonModule,
     RouterModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
+    
   ],
-  templateUrl: './reservas.html',
+  templateUrl: './reservas.html', 
   styleUrls: ['./reservas.css']
 })
 export class Reservas {
@@ -26,5 +28,8 @@ export class Reservas {
   this.data = nav?.extras?.state || {};
 }
 
+regresar() {
+  this.router.navigate(['/boletos']);
+}
 }
 

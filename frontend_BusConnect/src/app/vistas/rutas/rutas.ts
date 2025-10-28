@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component,OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card'; 
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
-
+import { Router } from '@angular/router';
 
 interface Ruta {
   titulo: string;
@@ -27,7 +27,15 @@ interface Ruta {
   templateUrl: './rutas.html',
   styleUrl: './rutas.css'
 })
-export class Rutas {
+export class Rutas implements OnInit, OnDestroy { 
+  //constructor y método para navegar a la vista de compra de boletos
+  constructor(private router: Router) {}
+  irAComprar(ruta: Ruta) {
+    this.router.navigate(['/boletos'], {
+      state: { destino: ruta.titulo }  // nombre de la ruta seleccionada
+    });
+  }
+  fade = false;
   rutas: Ruta[] = [
     {
       titulo: 'Ciudad de Guatemala – Quiché',
@@ -182,20 +190,54 @@ export class Rutas {
 
   currentIndex = 0;
   itemsPerPage = 3;
-
-  get rutasVisibles(): Ruta[] {
-    return this.rutas.slice(this.currentIndex, this.currentIndex + this.itemsPerPage);
-  }
-
-  next() {
-    if (this.currentIndex + this.itemsPerPage < this.rutas.length) {
-      this.currentIndex += this.itemsPerPage;
+  autoSlideInterval: any;
+  // Inicia el auto deslizamiento al cargar el componente
+    ngOnInit(): void {
+      this.autoSlideInterval = setInterval(() => {
+        this.autoNext();
+      }, 5000);
     }
-  }
-
-  prev() {
-    if (this.currentIndex - this.itemsPerPage >= 0) {
-      this.currentIndex -= this.itemsPerPage;
+    ngOnDestroy(): void {
+        clearInterval(this.autoSlideInterval);
     }
+  // Obtiene las rutas visibles según el índice actual y los elementos por página
+    get rutasVisibles(): Ruta[] {
+      return this.rutas.slice(this.currentIndex, this.currentIndex + this.itemsPerPage);
+    }
+  // Navega a la siguiente página
+    next() {
+      if (this.currentIndex + this.itemsPerPage < this.rutas.length) {
+        this.fade = true; // Inicia la transición de desvanecimiento
+        setTimeout(() => {
+        this.currentIndex += this.itemsPerPage;
+        this.fade = false; // Termina la transición de desvanecimiento
+      }, 300); // Duración de la transición
+      }
+    }
+  
+    prev() {
+      if (this.currentIndex - this.itemsPerPage >= 0) {
+        this.fade = true; // Inicia la transición de desvanecimiento
+        setTimeout(() => {
+        this.currentIndex -= this.itemsPerPage;
+        this.fade = false; // Termina la transición de desvanecimiento
+      }, 300); // Duración de la transición
+      }
+    }
+  
+      // Método auxiliar para avanzar y reiniciar al principio si llega al final
+      autoNext() {
+        this.fade = true; // Inicia la transición de desvanecimiento
+        setTimeout(() => {
+        const nextIndex = this.currentIndex + this.itemsPerPage;
+  
+        if (nextIndex >= this.rutas.length) {
+          this.currentIndex = 0; //  reinicia correctamente
+        } else {
+          this.currentIndex = nextIndex;
+        }
+        this.fade = false; // Termina la transición de desvanecimiento
+      }, 300); // Duración de la transición
+      }
   }
-}
+  

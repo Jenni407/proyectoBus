@@ -1,62 +1,69 @@
 .menu-header {
-    position: fixed; /* Fija el menú en la parte superior */
-    top: 0;
-    width: 100%;
-    background: linear-gradient(90deg,rgb(163, 187, 231), #9f9bc4); /* azul degradado elegante */
-    color: rgb(0, 29, 124);
-    text-align: center;
-    padding: 1rem 0;
-    box-shadow: 0 2px 8px rgba(218, 193, 193, 0.2);
-    z-index: 1000;
-    max-height:100px;
-  }
-
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg, #03275e 0%, #053f97 100%);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  padding: 2rem 2rem;
+  z-index: 1000;
+}
   .menu-title {
     display: flex;              /*  Coloca logo y texto uno al lado del otro*/
     align-items: center;        /* Alinea verticalmente el logo con el texto */
-    gap: 10px;                 /*  Espacio entre el logo y el texto */
-    text-align: start;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 25px;  
-    margin: 0;
+    justify-content: center;  /* Centra horizontalmente */
+    gap: 10px;                 /*  Espacio entre el logo y el texto */ 
     font-size: 2rem;
-    font-weight: bold;
+    font-weight: 700;
     letter-spacing: 1px;
+    color:#c0c2bdd8; /* Color blanco para el texto del título */
   }
+  
   
   .menu-nav {
     display: flex;
-    justify-content: center;
-    gap: 2rem;               /* Espacio entre los enlaces */
-    margin-top: 0.5rem;
+   align-items: center;
+    gap: 2.5rem;
+    margin-right: 4rem; /* <-- agrega esto */
   }
   
   .menu-nav a {   
     display: flex; 
-    color: rgb(42, 5, 173);
    align-items: center; /* alinea icono y texto */
-    gap: 0.5rem;
+    gap: 0.4rem;
     text-decoration: none;
-    font-weight: 500;
-    font-size: 1.1rem;
-    transition: color 0.3s ease, transform 0.2s ease;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #f0f4ff;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent;
   }
   
   .menu-nav a:hover {
-    color: #f3d83f; /* dorado al pasar el mouse */
+    color: #c0c2bdd8; /* Amarillo dorado al pasar */
+    border-bottom: 2px solid #c0c2bdd8;
     transform: translateY(-2px);
   }
   
   .menu-nav a.active {
-    border-bottom: 2px solid #ffd700;
-    padding-bottom: 2px;
+    color: #c0c2bdd8;
+    border-bottom: 2px solid #c0c2bdd8;
   }
   
  .icono {
-    font-size: 1.5rem; /* Tamaño del icono */
-    vertical-align: middle; /* Alinea el icono con el texto */
-    color: rgb(30, 11, 128);
+    font-size: 1.3rem; /* Tamaño del icono */
+    color: #c0c2bdd8; /* Color del icono */
+    transition: color 0.3s ease;
   }
   
+  .menu-nav a:hover .icono {
+    color: #fff;
+  }
+ 
  
