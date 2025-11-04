@@ -3,16 +3,16 @@
     <div class="info-card">
       <h2 class="section-title">Reserva en línea para asegurar tu asiento en el próximo viaje.</h2>
 
-      <mat-stepper [linear]="isLinear" #stepper>
-
+      <mat-stepper [linear]="isLinear" #stepper
+        (selectionChange)="onStepChange($event)">
         <!-- STEP 1: Destino -->
-        <mat-step [stepControl]="secondFormGroup">
+        <mat-step [stepControl]="secondFormGroup">  
           <ng-template matStepLabel>Destino</ng-template>
 
           <div class="payment-section" [formGroup]="secondFormGroup">
             <mat-form-field class="control-full-width">
               <mat-label>Origen</mat-label>
-              <input matInput formControlName="fromCtrl" readonly>
+              <input matInput formControlName="fromCtrl" readonly/>
               <mat-error *ngIf="secondFormGroup.get('fromCtrl')?.hasError('required')">
                 Campo requerido
               </mat-error>
@@ -138,26 +138,34 @@
                   <mat-label>Nombre</mat-label>
                   <input matInput formControlName="name" placeholder="Apellido, Nombre" maxlength="50">
                   <mat-error *ngIf="form.get('name')?.hasError('required')">Este campo es obligatorio</mat-error>
+                  <mat-error *ngIf="form.get('name')?.hasError('pattern')">Solo se permiten letras y espacios</mat-error>
+                  <mat-error *ngIf="form.get('name')?.hasError('minlength')">Debe tener un mínimo 10 carácteres</mat-error>
                 </mat-form-field>
+               
 
                 <mat-form-field appearance="fill" class="control-compact">
                   <mat-label>DPI o Pasaporte</mat-label>
                   <input matInput formControlName="id" maxlength="13" placeholder="Ej. 1234567890123">
                   <mat-error *ngIf="form.get('id')?.hasError('required')">Campo obligatorio</mat-error>
+                  <mat-error *ngIf="form.get('id')?.hasError('pattern')">Solo se permiten números </mat-error>
+                  <mat-error *ngIf="form.get('id')?.hasError('minlength')">Debe tener 13 dígitos </mat-error>
+                  <mat-error *ngIf="form.get('id')?.hasError('maxlength')">Debe tener 13 dígitos </mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="fill" class="control-compact">
                   <mat-label>Celular</mat-label>
                   <input matInput formControlName="phone" maxlength="8" placeholder="Ej. 12345678">
                   <mat-error *ngIf="form.get('phone')?.hasError('required')">Campo obligatorio</mat-error>
+                  <mat-error *ngIf="form.get('phone')?.hasError('pattern')">Solo se permiten números </mat-error>
+                  <mat-error *ngIf="form.get('phone')?.hasError('minlength')">Debe tener 8 dígitos </mat-error>
+                  <mat-error *ngIf="form.get('phone')?.hasError('maxlength')">Debe tener 8 dígitos </mat-error>
                 </mat-form-field>
                 <hr>
               </div>
             </div>
-
-            <div class="timer" *ngIf="!paymentConfirmed">
-              Tiempo restante: <strong>{{ countdown }}</strong>
-            </div>
+          </div>
+          <div class="timer" *ngIf="!paymentConfirmed">
+            Tiempo restante: <strong>{{ countdown }}</strong>
           </div>
 
           <div class="step-buttons">
@@ -199,22 +207,34 @@
               <mat-form-field class="control-full-width">
                 <mat-label>Correo electrónico</mat-label>
                 <input matInput formControlName="email" placeholder="ejemplo@correo.com">
+                <mat-error *ngIf="paymentFormGroup.get('email')?.hasError('required')">Campo obligatorio</mat-error>
+                <mat-error *ngIf="paymentFormGroup.get('email')?.hasError('email')">Ingresa un correo válido</mat-error>
               </mat-form-field>
 
               <mat-form-field class="control-compact">
                 <mat-label>Número de tarjeta</mat-label>
                 <input matInput formControlName="cardNumber" maxlength="16" placeholder="1234123412341234">
+                <mat-error *ngIf="paymentFormGroup.get('cardNumber')?.hasError('required')">Campo obligatorio</mat-error>
+                <mat-error *ngIf="paymentFormGroup.get('cardNumber')?.hasError('pattern')">Solo se permiten números </mat-error>
+                <mat-error *ngIf="paymentFormGroup.get('cardNumber')?.hasError('minlength')">Debe tener 16 dígitos </mat-error>
+                <mat-error *ngIf="paymentFormGroup.get('cardNumber')?.hasError('maxlength')">Debe tener 16 dígitos </mat-error>
               </mat-form-field>
 
               <div class="row-two">
                 <mat-form-field class="control-compact half">
                   <mat-label>MM/YY</mat-label>
                   <input matInput formControlName="expiry" placeholder="MM/YY">
+                  <mat-error *ngIf="paymentFormGroup.get('expiry')?.hasError('required')">Campo obligatorio</mat-error>
+                  <mat-error *ngIf="paymentFormGroup.get('expiry')?.hasError('pattern')">Formato inválido, debe ser MM/YY</mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="control-compact half">
                   <mat-label>CVV</mat-label>
                   <input matInput formControlName="cvv" maxlength="3" placeholder="123">
+                  <mat-error *ngIf="paymentFormGroup.get('cvv')?.hasError('required')">Campo obligatorio </mat-error>
+                  <mat-error *ngIf="paymentFormGroup.get('cvv')?.hasError('pattern')">Solo se permiten números</mat-error>
+                  <mat-error *ngIf="paymentFormGroup.get('cvv')?.hasError('minlength')">Debe tener 3 dígitos</mat-error>
+                  <mat-error *ngIf="paymentFormGroup.get('cvv')?.hasError('maxlength')">Debe tener 3 dígitos</mat-error>
                 </mat-form-field>
               </div>
 
@@ -237,10 +257,6 @@
 
           <div class="step-buttons">
             <button class="button-azul" matStepperPrevious>Regresar</button>
-            <button class="button-azul" (click)="goToNextStep(stepper, true)" [disabled]="!paymentConfirmed">
-              Finalizar
-            </button>
-            
           </div>
         </mat-step>
 
@@ -248,9 +264,11 @@
         <mat-step>
           <ng-template matStepLabel>Listo</ng-template>
           <p class="section-title">Tu boleto ha sido reservado.</p>
-          <div class="step-buttons">
-            <button class="button-reserva" (click)="verReserva()">Ver Reserva</button>
+          <!-- Mostrar botón si existe una reserva -->
+          <div class="step-buttons" *ngFor="let r of reserva">
+            <button class="button-reserva" (click)="verReserva(r)">Ver Reserva</button>
           </div>
+          
         </mat-step>
 
       </mat-stepper>
@@ -261,5 +279,39 @@
            alt="Bus en movimiento"
            class="bus-animation-img" />
     </div>
+  </div>
+</div>
+
+<!-- Modal estilo bus (al final) -->
+<div class="modal-fondo" *ngIf="mostrarModal">
+  <div class="modal-bus" [ngClass]="tipoModal">
+
+    <!-- Bus animado a la derecha (éxito de reserva) -->
+    <img 
+      *ngIf="tipoModal === 'success'" 
+      src="https://i.imgur.com/7QZ4z4M.gif" 
+      alt="Reserva confirmada" 
+      width="90">
+
+    <!-- Error (usa tu GIF actual o el que quieras) -->
+    <img 
+      *ngIf="tipoModal === 'error'" 
+      src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f68c.gif"
+      alt="Error" 
+      width="90">
+
+      <!-- GIF opcional info -->
+      <img 
+      *ngIf="tipoModal === 'info'" 
+      src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f68c.gif"
+      alt="Información" 
+      width="90">
+
+    <!-- 👇 Oculta el título si no hay texto -->
+    <h2 *ngIf="tituloModal && tituloModal !== 'Éxito' && tituloModal !== 'Error'">
+      {{ tituloModal }}
+    </h2>
+    <p>{{ mensajeModal }}</p>
+    <button class="button-boleto" (click)="aceptarModal()">Aceptar</button>
   </div>
 </div>

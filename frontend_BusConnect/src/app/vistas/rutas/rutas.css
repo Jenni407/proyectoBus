@@ -32,6 +32,7 @@
   border-radius: 8px;
   width: 310px;
 }
+
 .info-card h3 {
   margin-top: 0;
   color: #03275e;
@@ -41,6 +42,10 @@
   transform: translateY(-5px);
 }
 
+.rotateY:hover {
+  transform: rotateY(360deg);
+  }
+  
 .info-card img {
   display: block;
   width: 100%;

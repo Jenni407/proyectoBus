@@ -15,6 +15,7 @@ import { BusesService, Bus } from '../../services/buses.service';
 import { ViajesService, Viaje } from '../../services/viajes.service';
 import { AsientosService, Asiento } from '../../services/asientos.service';
 import { ReservasService } from '../../services/reservas.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-boletos',
@@ -30,7 +31,8 @@ import { ReservasService } from '../../services/reservas.service';
     MatStepperModule, MatStepper,
     RouterModule,
     MatSelectModule,
-    FormsModule
+    FormsModule,
+    MatDialogModule
   ],
   templateUrl: './boletos.html',
   styleUrls: ['./boletos.css'],
@@ -39,13 +41,70 @@ import { ReservasService } from '../../services/reservas.service';
 
 export class Boletos implements OnInit {
   showBusAnimation = false;
-  // Función para manejar la animación y avanzar al siguiente paso
+  mostrarModal: boolean  = false;
+  tipoModal: 'success' | 'error' | 'info' = 'success';
+  tituloModal:string = '';
+  mensajeModal: string = '';
+  correoPasajero: any;
+  email: any;
+  reserva: any;
+
+   // Llamas esto cuando quieras mostrar el modal
+   mostrarAlerta(
+    titulo: string,
+    mensaje?: string,
+    tipo?: 'success' | 'error' | 'info'
+  ) {
+    // Si solo se pasan 2 parámetros, interpretamos que son (mensaje, tipo)
+    if (!mensaje && !tipo) {
+      this.tituloModal = 'Información';
+      this.mensajeModal = titulo;
+      this.tipoModal = 'info';
+    } 
+    // Si se pasan 2 parámetros (mensaje, tipo)
+    else if (mensaje && !tipo) {
+      this.tituloModal = (mensaje === 'success') ? 'Éxito' : 
+                         (mensaje === 'error') ? 'Error' : 'Información';
+      this.mensajeModal = titulo;
+      this.tipoModal = mensaje as 'success' | 'error' | 'info';
+    } 
+    // Si se pasan los 3 parámetros (titulo, mensaje, tipo)
+    else {
+      this.tituloModal = titulo;
+      this.mensajeModal = mensaje!;
+      this.tipoModal = tipo!;
+    }
+  
+    this.mostrarModal = true;
+  }
+  
+  // Se ejecuta al presionar "Aceptar"
+  aceptarModal() 
+  { this.mostrarModal = false;
+    //si el tiempo acabo
+    if (this.countdown === '00:00') {
+      // Liberar asientos reservados
+      this.seats.forEach(seat => {
+        if (seat.status === 'reserved') seat.status = 'available';
+      });
+      this.selectedSeats = [];
+
+      const origenActual = this.secondFormGroup.get('fromCtrl')?.value || 'Guatemala';
+      // Resetear formularios pero mantener origen
+      this.resetStepper();
+      this.secondFormGroup.patchValue({ fromCtrl: origenActual });
+      this.cdr.detectChanges(); // asegura que Angular actualice la vista
+      }
+      }
+  // AVANZAR AL SIGUIENTE PASO
   goToNextStep(stepper: MatStepper, isSeatStep: boolean = false) {
     const currentStep = stepper.selected;
     const stepControl = currentStep?.stepControl as FormGroup;
-  
+    
+  // Validar el formulario actual antes de avanzar
     if (stepControl && stepControl.invalid) {
-      stepControl.markAllAsTouched(); // Esto hará que se muestren los errores
+      stepControl.markAllAsTouched(); // marca todos los campos
+      stepControl.updateValueAndValidity(); 
       return; // Evita que avance
     }
     //mostrar animación y continuar 
@@ -56,20 +115,20 @@ export class Boletos implements OnInit {
   
       if (isSeatStep) {
         this.generatePassengerForms();
-        this.startCountdown();
+        this.startCountdown(); // Inicia el contador aquí
       }
   
       stepper.next();
     }, 3000);
   }
   // rutas 
-  private router = inject(Router);
   private rutasService = inject(RutasService);
   private busesService = inject(BusesService);
   private viajesService = inject(ViajesService);
   private asientosService = inject(AsientosService);
   private reservasService = inject(ReservasService);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
   origin: any;
   constructor() {
     const navigation = history.state; //obtienes los datos enviados
@@ -124,7 +183,15 @@ export class Boletos implements OnInit {
     this.fetchRutas();
     this.fetchBuses();
   }
+// PASO DE FECHA (Tercer Formulario)
   onDateNext(animate = false) {
+
+    const stepControl = this.thirdFormGroup;
+    if (stepControl.invalid) {
+      stepControl.markAllAsTouched();
+      stepControl.updateValueAndValidity();
+      return;
+    }
     const rutaId = this.secondFormGroup.get('rutaCtrl')?.value;
     const fecha = this.thirdFormGroup.get('date')?.value;
   
@@ -142,8 +209,15 @@ export class Boletos implements OnInit {
       this.stepper.next();
     }
   }
-
+//PASO DE HORARIO (Viaje FormGroup)
   onViajeNext(animate = false) {
+    const stepControl = this.viajeFormGroup;
+    if (stepControl.invalid) {
+      stepControl.markAllAsTouched();
+      stepControl.updateValueAndValidity();
+      return;
+    }
+
     const viaje = this.viajeFormGroup.get('viaje')?.value;
     if (!viaje) return;
   
@@ -223,14 +297,13 @@ fetchViajes(rutaId: number, fecha: Date) {
 }
 
 
-
 fetchAsientos(busId: number, viajeId: number) {
   this.isLoading = true;
   this.asientosService.getAsientos(busId, viajeId).subscribe({
     next: data => {
       console.log('Asientos recibidos de API:', data);
 
-      // 🔍 Prueba en consola para verificar mapeo real
+      // Prueba en consola para verificar mapeo real
       const pruebaMapeo = data.map(apiSeat => {
         const estado = (apiSeat.Estado ?? apiSeat.estado ?? '').toLowerCase();
         let status = 'available';
@@ -282,6 +355,53 @@ fetchAsientos(busId: number, viajeId: number) {
     }
   });
 }
+onStepChange(event: any) {
+  const prevIndex = event.previouslySelectedIndex;
+  const newIndex = event.selectedIndex;
+
+  // Si el usuario regresa del paso "Datos" al paso "Asientos"
+if (event.previouslySelectedIndex === 4 && event.selectedIndex === 3) {
+  console.log('Regresaste del paso Datos a Asientos');
+  
+  // Limpia el formulario de pasajeros
+  this.passengerFormArray.clear();
+  this.passengerFormGroup.reset();
+
+  // Limpia la validación previa
+  this.passengerFormGroup.markAsPristine();
+  this.passengerFormGroup.markAsUntouched();
+}
+
+  // Si el usuario regresa del paso de "Asientos" al de "Horario"
+  if (prevIndex === 3 && newIndex === 2) {
+    console.log('Regresaste del paso de Asientos al Horario.');
+    // Limpia asientos seleccionados para que no se mantengan si cambia el viaje
+    this.selectedSeats = [];
+    // Recarga los asientos del viaje actual (en caso de que el usuario cambie)
+    const viaje = this.viajeFormGroup.get('viaje')?.value;
+    if (viaje) {
+      const selected = this.availableViajes.find(v => v.viaje_id === Number(viaje));
+      if (selected) {
+        this.fetchAsientos(selected.bus_id, selected.viaje_id);
+      }
+    }
+  }
+
+  // Si el usuario regresa del paso "Horario" al paso "Fecha"
+  if (prevIndex === 2 && newIndex === 1) {
+    console.log('Regresaste del paso Horario a Fecha.');
+    this.viajeFormGroup.reset();
+    this.availableViajes = [];
+    this.selectedViaje = null;
+    this.selectedHorario = null;
+  }
+
+  // Si regresa del paso "Fecha" al paso "Destino"
+  if (prevIndex === 1 && newIndex === 0) {
+    console.log(' Regresaste del paso Fecha a Destino.');
+    this.thirdFormGroup.reset();
+  }
+}
 
   @ViewChild('stepper') stepper!: MatStepper;
 
@@ -291,7 +411,7 @@ fetchAsientos(busId: number, viajeId: number) {
     passengers: this.passengerFormArray
   });
 
-  countdown = '05:00';  // inicaliza el temporizador
+  countdown = '01:00';  // inicaliza el temporizador
   paymentConfirmed = false;
   timerInterval: any;
 
@@ -330,7 +450,7 @@ generatePassengerForms(): void {
       
       name: ['',[
          Validators.required,
-        Validators.pattern(/^[a-zA-ZÀ-ÿ\s]+$/), // Solo letras y espacios, incluyendo acentos
+        Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/), // Solo letras y espacios
         Validators.minLength(10),
         Validators.maxLength(50)
       ]
@@ -360,7 +480,9 @@ paymentFormGroup = this._formBuilder.group({
     '',
     [
       Validators.required,
-      Validators.pattern(/^[0-9]{16}$/) // exactamente 16 dígitos
+      Validators.pattern(/^[0-9]{16}$/), // exactamente 16 dígitos
+      Validators.minLength(16),
+      Validators.maxLength(16)
     ]
   ],
 
@@ -368,7 +490,9 @@ paymentFormGroup = this._formBuilder.group({
     '',
     [
       Validators.required,
-      Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/) // formato MM/YY
+      Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/), // formato MM/YY
+      Validators.minLength(5),
+      Validators.maxLength(5)
     ]
   ],
 
@@ -376,20 +500,23 @@ paymentFormGroup = this._formBuilder.group({
     '',
     [
       Validators.required,
-      Validators.pattern(/^[0-9]{3}$/) // exactamente 3 dígitos
+      Validators.pattern(/^[0-9]{3}$/), // exactamente 3 dígitos
+      Validators.minLength(3),
+      Validators.maxLength(3)
     ]
   ]
 });
   // Temporizador
   startCountdown() {
-    let total = 5 * 60; // 5 minutos en segundos
+    let total = 1 * 60; // 5 minutos en segundos
     clearInterval(this.timerInterval); // Limpia cualquier temporizador previo
     this.countdown = this.formatTime(total); // muestra el tiempo inicial
 
     this.timerInterval = setInterval(() => {
       total--;
       this.countdown = this.formatTime(total);
-      
+      this.cdr.detectChanges();
+
       if (total <= 0) {
         clearInterval(this.timerInterval);
         this.handleTimeout();
@@ -401,13 +528,14 @@ paymentFormGroup = this._formBuilder.group({
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
+
   handleTimeout() {
     this.seats.forEach(seat => {
       if (seat.status === 'reserved') seat.status = 'available';
     });
     this.selectedSeats = [];
-    alert('El tiempo expiró. La reserva ha sido cancelada.');
-    this.resetStepper();
+
+    this.mostrarAlerta('El tiempo expiró. La reserva ha sido cancelada.', 'error');
   }
 
   // Clase CSS dinámica para los asientos
@@ -437,42 +565,57 @@ selectSeat(seatNumber: number): void {
   
    // Pago del boleto
 paySeat() {
+  // --- Validación Paso 1: Ruta ---
+  const rutaId = this.secondFormGroup.get('rutaCtrl')?.value;
+  if (!rutaId) {
+    this.mostrarAlerta('Debe seleccionar una ruta antes de continuar.', 'error');
+    setTimeout(() => (this.stepper.selectedIndex = 0), 100);
+    return;
+  }
+
+  // --- Validación Paso 2: Fecha ---
+  const fechaSeleccionada = this.thirdFormGroup.get('date')?.value;
+  if (!fechaSeleccionada) {
+    this.mostrarAlerta('Debe seleccionar una fecha de viaje antes de continuar.', 'error');
+    setTimeout(() => (this.stepper.selectedIndex = 1), 100);
+    return;
+  }
+
+  // --- Validación Paso 3: Viaje ---
   if (!this.selectedViaje) {
-    alert('Debe seleccionar un viaje antes de continuar.');
+    this.mostrarAlerta('Debe seleccionar un horario de salida.', 'error');
+    setTimeout(() => (this.stepper.selectedIndex = 2), 100);
     return;
   }
 
-  // Validar formulario de pasajeros
-  if (this.passengerFormArray.invalid) {
-    alert('Por favor complete todos los datos de los pasajeros correctamente.');
+  // --- Validación Paso 4: Asientos ---
+  if (this.selectedSeats.length === 0) {
+    this.mostrarAlerta('Debe seleccionar al menos un asiento.', 'error');
+    setTimeout(() => (this.stepper.selectedIndex = 3), 100);
     return;
   }
 
-  // Validar que el número de pasajeros coincida con asientos seleccionados
+  // --- Validación Paso 5: Pasajeros ---
   if (this.passengerFormArray.length !== this.selectedSeats.length) {
-    alert('El número de pasajeros no coincide con los asientos seleccionados.');
+    this.mostrarAlerta('El número de pasajeros no coincide con los asientos seleccionados.', 'error');
+    setTimeout(() => (this.stepper.selectedIndex = 4), 100);
     return;
   }
 
-  /* Construir objeto reserva
-  const reserva = {
-    email: this.email,
-    cardInfo: this.cardInfo,
-    viajeId: this.selectedViaje.viaje_id,
-    from: this.getSelectedRutaName().split(' - ')[0] || '',
-    to: this.getSelectedRutaName().split(' - ')[1] || '',
-    fecha: this.selectedViaje.fecha_salida,
-    bus: this.getSelectedBusName(),
-    passengers: this.passengerFormArray.controls.map((form, index) => ({
-      nombre: form.get('name')?.value,
-      dpi: form.get('id')?.value,
-      telefono: form.get('phone')?.value,
-      asiento: this.selectedSeats[index] // Usar el formato real "A1", "B2", etc.
-    }))
-  };*/
+  if (this.passengerFormArray.invalid) {
+    this.mostrarAlerta('Por favor completa los datos del pasajero.', 'error');
+    setTimeout(() => (this.stepper.selectedIndex = 4), 100);
+    return;
+  }
 
+  // --- Validación Paso 6: Pago ---
+  if (this.paymentFormGroup.invalid) {
+    this.mostrarAlerta('Por favor completa todos los datos de pago correctamente.', 'error');
+    setTimeout(() => (this.stepper.selectedIndex = 5), 100);
+    return;
+  }
 
-
+  
   const reserva = {
     email: this.paymentFormGroup.get('email')?.value,
     cardInfo: {
@@ -481,9 +624,10 @@ paySeat() {
       cvv: this.paymentFormGroup.get('cvv')?.value
     },
     viajeId: this.selectedViaje.viaje_id,
-    from: this.getSelectedRutaName().split(' - ')[0] || '',
-    to: this.getSelectedRutaName().split(' - ')[1] || '',
-    fecha: this.selectedViaje.fecha_salida,
+    from: 'Guatamela',
+    to: this.getSelectedRutaName().split(' - ')[0] || '',
+    fecha: this.thirdFormGroup.get('date')?.value,
+   horario: this.selectedViaje?.fecha_salida,
     bus: this.getSelectedBusName(),
     passengers: this.passengerFormArray.controls.map((form, index) => {
       const asientoConLetra = this.selectedSeats[index];
@@ -498,57 +642,98 @@ paySeat() {
     })
   };
 
-
   console.log('Enviando reserva:', reserva);
   
 
-  // Enviar reserva al backend
-  this.reservasService.crearReserva(reserva).subscribe({
-    next: (response: any) => {
-      console.log('Reserva exitosa:', response);
-
-      // Actualizar estado de asientos visualmente
-      this.fetchAsientos(this.selectedViaje!.bus_id, this.selectedViaje!.viaje_id);
-
-      this.paymentConfirmed = true;
-      clearInterval(this.timerInterval);
-      alert('✅ Reserva registrada y pago confirmado');
-
-    },
-    error: (err) => {
-      console.error('Error al enviar reserva:', err);
-      let errorMessage = 'Error al procesar la reserva';
-
-      if (err.error?.detalle) {
-        errorMessage += `: ${err.error.detalle}`;
-      } else if (err.error?.mensaje) {
-        errorMessage += `: ${err.error.mensaje}`;
+    // Enviar reserva al backend
+    this.reservasService.crearReserva(reserva).subscribe({
+      next: (response: any) => {
+        console.log('Reserva exitosa:', response);
+  
+        // Actualizar estado de asientos visualmente
+        this.fetchAsientos(this.selectedViaje!.bus_id, this.selectedViaje!.viaje_id);
+  
+        this.paymentConfirmed = true;
+        clearInterval(this.timerInterval);
+  
+      // Siempre guardamos nuestra reserva local para mostrarla en el paso final
+if (!this.reserva) this.reserva = [];
+this.reserva.push(reserva);
+this.cdr.detectChanges();
+  
+        // forzar actualización de la vista
+        this.cdr.detectChanges();
+  
+        this.mostrarAlerta(
+          'Boleto Reservado',
+          'Tu reserva ha sido registrada correctamente. ¡Buen viaje!','success');
+  
+        setTimeout(() => {
+          this.stepper.next();
+        }, 2000);
+      },
+      error: (err) => {
+        let errorMessage = 'Error al procesar la reserva';
+  
+        if (err.error?.detalle) {
+          errorMessage += `: ${err.error.detalle}`;
+        } else if (err.error?.mensaje) {
+          errorMessage += `: ${err.error.mensaje}`;
+        }
+  
+        this.mostrarAlerta(errorMessage, 'error');
       }
-
-      alert(errorMessage);
-    }
-  });
+    });
+  
 }
 
+verReserva(reserva: any) {
+  if (!reserva) {
+    console.warn(' No hay reserva para mostrar.');
+    return;
+  }
 
+  // Si tu reserva está en un arreglo, acepta el caso
+  const res = Array.isArray(reserva) ? reserva[0] : reserva;
 
-verReserva() {
-  if (!this.selectedViaje) return;
-  const ruta = this.rutas.find(r => r.ruta_id === this.selectedViaje!.ruta_id);
+  // Tomamos pasajeros (puede venir de passengers o pasajeros)
+  const pasajeros = res.passengers || res.pasajeros || [];
+
+  // Armamos los boletos uno por uno con la info del formulario
+  const boletos = pasajeros.map((p: any, index: number) => ({
+    correo: res.email || this.paymentFormGroup.get('email')?.value || '',
+    nombre: p.nombre ?? p.nombre_pasajero ?? p.name ?? '',
+    dpi: p.dpi ?? p.id ?? p.dpi_pasajero ?? '',
+    telefono: p.telefono ?? p.phone ?? '',
+    from: 'Guatemala',
+    to: this.getSelectedRutaName().split(' - ')[0] || '',
+    fecha: this.thirdFormGroup.get('date')?.value,
+    horario: this.selectedViaje?.fecha_salida,
+    asiento: p.asiento ?? p.seat ?? this.selectedSeats[index] ?? ''
+  }));
+
+  // Objeto general de reserva
+  const reservaCompleta = {
+    email: res.email || this.paymentFormGroup.get('email')?.value || '',
+    viajeId: this.selectedViaje?.viaje_id,
+    ruta: this.getSelectedRutaName(),
+    fecha: this.thirdFormGroup.get('date')?.value,
+    horario: this.selectedViaje?.fecha_salida,
+    pasajeros: boletos
+  };
+
+  console.log('🧾 Enviando reserva al componente Reservas:', reservaCompleta);
+
+  // Navegamos al componente de Reservas con toda la información
   this.router.navigate(['/reservas'], {
     state: {
-      pasajeros: this.passengerFormArray.controls.map((form, index) => ({
-        nombre: form.get('name')?.value,
-        dpi: form.get('id')?.value,
-        telefono: form.get('phone')?.value,
-        from: ruta?.nombre.split(' - ')[0] || '',
-        to: ruta?.nombre.split(' - ')[1] || '',
-        fecha: this.thirdFormGroup.get('date')?.value,
-        asiento: this.selectedSeats[index]
-      }))
+      reserva: reservaCompleta,   // toda la info
+      pasajeros: boletos,         // arreglo de boletos individuales
+      correo: reservaCompleta.email
     }
   });
 }
+
 
   // Obtiene el nombre del viaje seleccionado
   getSelectedViajeName(): string {
@@ -578,12 +763,13 @@ verReserva() {
 
   // Reinicia el stepper y los formularios
   resetStepper(): void {
-
+  const origen = this.secondFormGroup.get('fromCtrl')?.value || 'Guatemala';
   // Reinicia los campos
     this.stepper.reset();
     this.paymentConfirmed = false;
     this.paymentFormGroup.reset();
-    this.secondFormGroup.reset();
+      // Reinicia formularios manteniendo el origen
+    this.secondFormGroup.get('rutaCtrl')?.reset();
     this.thirdFormGroup.reset();
     this.viajeFormGroup.reset();
     this.passengerFormArray.clear();
