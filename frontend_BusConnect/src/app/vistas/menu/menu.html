@@ -1,10 +1,9 @@
 <header class="menu-header">
   <div class="menu-container">
-    <h1 class="menu-title">
+    <h1 class="menu-title"> 
       BusConnect
     </h1>
   </div>
-
   <nav class="menu-nav">
     <a routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
       <mat-icon class = "icono">home</mat-icon> Inicio
@@ -15,9 +14,17 @@
     <a routerLink="boletos" routerLinkActive="active">
       <mat-icon  class ="icono">confirmation_number</mat-icon> Boletos
     </a>
-
   </nav>
 </header>
+ <!-- Texto animado inferior -->
+ <div class="ticker-container">
+  <div class="ticker-text">
+    <span>¡Bienvenido a nuestra empresa!</span>
+    <span>Promoción especial en reservas</span>
+    <span>Atención 24/7 para nuestros clientes</span>
+  </div>
+</div>
+
 
 <!-- Aquí se muestran los componentes hijos -->
 <router-outlet></router-outlet>

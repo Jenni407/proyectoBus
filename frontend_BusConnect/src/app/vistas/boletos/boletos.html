@@ -63,32 +63,52 @@
           </div>
         </mat-step>
 
-        <!-- STEP 3: Horario -->
-        <mat-step [stepControl]="viajeFormGroup">
-          <ng-template matStepLabel>Horario</ng-template>
+      <!-- STEP 3: Horario -->
+      <mat-step [stepControl]="viajeFormGroup">
+        <ng-template matStepLabel>Horario</ng-template>
 
-          <div [formGroup]="viajeFormGroup" class="payment-section">
+        <div [formGroup]="viajeFormGroup" class="payment-section">
+          <p *ngIf="isLoading">Cargando viajes...</p>
+          <p *ngIf="viajesError">{{ viajesError }}</p>
+
+          <!-- Viajes de Ida -->
+          <div *ngIf="viajesIda.length > 0" class="viajes-section">
+            <h3 class="viajes-title">🚌 Viajes de Ida</h3>
             <mat-form-field class="control-full-width">
-              <mat-label>Selecciona su horario</mat-label>
-              <mat-select formControlName="viaje" required>
-                <mat-option *ngFor="let viaje of availableViajes" [value]="viaje.viaje_id">
-                  Viaje {{ viaje.fecha_salida | date: 'dd/MM/yyyy, h:mm a' }} - Bus {{ getBusPlaca(viaje.bus_id) }}
+              <mat-label>Selecciona horario (Ida)</mat-label>
+              <mat-select formControlName="viajeIda" (selectionChange)="onViajeIdaChange()">
+                <mat-option [value]="null">-- Deseleccionar --</mat-option>
+                <mat-option *ngFor="let viaje of viajesIda" [value]="viaje.viaje_id">
+                  {{ viaje.fecha_salida | date:'HH:mm' }} - Bus {{ viaje.bus_id }}
                 </mat-option>
               </mat-select>
-              <mat-error *ngIf="viajeFormGroup.get('viaje')?.hasError('required')">
-                Selecciona un horario
-              </mat-error>
             </mat-form-field>
-            <p *ngIf="isLoading">Cargando viajes...</p>
-            <p *ngIf="viajesError">{{ viajesError }}</p>
           </div>
 
-          <div class="step-buttons">
-            <button class="button-azul" matStepperPrevious>Regresar</button>
-            <button class="button-azul" (click)="onViajeNext(true)">Siguiente</button>
+          <!-- Viajes de Retorno -->
+          <div *ngIf="viajesRetorno.length > 0" class="viajes-section">
+            <h3 class="viajes-title">🔄 Viajes de Retorno</h3>
+            <mat-form-field class="control-full-width">
+              <mat-label>Selecciona horario (Retorno)</mat-label>
+              <mat-select formControlName="viajeRetorno" (selectionChange)="onViajeRetornoChange()">
+                <mat-option [value]="null">-- Deseleccionar --</mat-option>
+                <mat-option *ngFor="let viaje of viajesRetorno" [value]="viaje.viaje_id">
+                  {{ viaje.fecha_salida | date:'HH:mm' }} - Bus {{ viaje.bus_id }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
-        </mat-step>
 
+          <mat-error *ngIf="viajeFormGroup.hasError('noViajeSelected')" class="error-message">
+            Selecciona un horario
+          </mat-error>
+        </div>
+
+        <div class="step-buttons">
+          <button class="button-azul" matStepperPrevious>Regresar</button>
+          <button class="button-azul" (click)="onViajeNext(true)">Siguiente</button>
+        </div>
+      </mat-step>
         <!-- STEP 4: Asientos -->
         <mat-step>
           <ng-template matStepLabel>Asientos</ng-template>
@@ -223,8 +243,12 @@
               <div class="row-two">
                 <mat-form-field class="control-compact half">
                   <mat-label>MM/YY</mat-label>
-                  <input matInput formControlName="expiry" placeholder="MM/YY">
+                  <input matInput formControlName="expiry" placeholder="MM/YY"  maxlength="5"
+                  (input)="formatExpiry($event)">
                   <mat-error *ngIf="paymentFormGroup.get('expiry')?.hasError('required')">Campo obligatorio</mat-error>
+                  <mat-error *ngIf="paymentFormGroup.get('expiry')?.hasError('expired')">
+                    Tarjeta vencida
+                  </mat-error>
                   <mat-error *ngIf="paymentFormGroup.get('expiry')?.hasError('pattern')">Formato inválido, debe ser MM/YY</mat-error>
                 </mat-form-field>
 
@@ -307,7 +331,6 @@
       alt="Información" 
       width="90">
 
-    <!-- 👇 Oculta el título si no hay texto -->
     <h2 *ngIf="tituloModal && tituloModal !== 'Éxito' && tituloModal !== 'Error'">
       {{ tituloModal }}
     </h2>

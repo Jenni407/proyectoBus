@@ -40,11 +40,14 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 
 export class Boletos implements OnInit {
+  // Animación de bus
   showBusAnimation = false;
+  // Modal de alerta
   mostrarModal: boolean  = false;
   tipoModal: 'success' | 'error' | 'info' = 'success';
   tituloModal:string = '';
   mensajeModal: string = '';
+  // Datos de la reserva
   correoPasajero: any;
   email: any;
   reserva: any;
@@ -150,6 +153,8 @@ export class Boletos implements OnInit {
   buses: Bus[] = [];
   viajes: Viaje[] = [];
   availableViajes: Viaje[] = [];
+  viajesIda: Viaje[] = [];
+  viajesRetorno: Viaje[] = []; 
   selectedViaje: Viaje | null = null;
   selectedHorario: string | null = null;
   isLoading = false;
@@ -218,7 +223,10 @@ export class Boletos implements OnInit {
       return;
     }
 
-    const viaje = this.viajeFormGroup.get('viaje')?.value;
+    const viajeIda = this.viajeFormGroup.get('viajeIda')?.value;
+    const viajeRetorno = this.viajeFormGroup.get('viajeRetorno')?.value;
+    const viaje = viajeIda || viajeRetorno;
+    
     if (!viaje) return;
   
     const selected = this.availableViajes.find(v => v.viaje_id === Number(viaje));
@@ -279,14 +287,29 @@ fetchViajes(rutaId: number, fecha: Date) {
         bus_id: v.busId,
         fecha_salida: v.fechaSalida,
         fecha_llegada_estimada: v.fechaLlegadaEstimada,
-        estado: v.estado
+        estado: v.estado,
+        // NUEVO: Agregar dirección basada en hora (impar=ida, par=retorno)
+        direccion: new Date(v.fechaSalida).getHours() % 2 === 1 ? 'ida' : 'retorno'
       }));
+
+      // NUEVO: Filtrar viajes por hora - impares = ida, pares = retorno
+      this.viajesIda = this.viajes.filter(v => {
+        const hour = new Date(v.fecha_salida).getHours();
+        return hour % 2 === 1; // horas impares: 5,7,9,...,19
+      });
+
+      this.viajesRetorno = this.viajes.filter(v => {
+        const hour = new Date(v.fecha_salida).getHours();
+        return hour % 2 === 0; // horas pares: 6,8,10,...,20
+      });
 
       this.availableViajes = this.viajes;
       this.isLoading = false;
       this.cdr.detectChanges();
 
       console.log('Viajes transformados:', this.availableViajes);
+      console.log('Viajes de Ida:', this.viajesIda);
+      console.log('Viajes de Retorno:', this.viajesRetorno);
     },
     error: err => {
       console.error('Error al obtener viajes:', err);
@@ -378,7 +401,9 @@ if (event.previouslySelectedIndex === 4 && event.selectedIndex === 3) {
     // Limpia asientos seleccionados para que no se mantengan si cambia el viaje
     this.selectedSeats = [];
     // Recarga los asientos del viaje actual (en caso de que el usuario cambie)
-    const viaje = this.viajeFormGroup.get('viaje')?.value;
+    const viajeIda = this.viajeFormGroup.get('viajeIda')?.value;
+    const viajeRetorno = this.viajeFormGroup.get('viajeRetorno')?.value;
+    const viaje = viajeIda || viajeRetorno;
     if (viaje) {
       const selected = this.availableViajes.find(v => v.viaje_id === Number(viaje));
       if (selected) {
@@ -402,8 +427,63 @@ if (event.previouslySelectedIndex === 4 && event.selectedIndex === 3) {
     this.thirdFormGroup.reset();
   }
 }
+formatExpiry(event: any): void {
+  let input = event.target.value.replace(/\D/g, ''); // quitar todo lo que no sea número
+  if (input.length > 2) {
+    input = input.substring(0, 2) + '/' + input.substring(2, 4);
+  }
+  event.target.value = input;
+  this.paymentFormGroup.get('expiry')?.setValue(input, { emitEvent: false });
+}
 
   @ViewChild('stepper') stepper!: MatStepper;
+
+  // Validador personalizado: requiere que al menos uno de los viajes esté seleccionado
+  atLeastOneViajeValidator() {
+    return (formGroup: FormGroup) => {
+      const viajeIda = formGroup.get('viajeIda');
+      const viajeRetorno = formGroup.get('viajeRetorno');
+
+      // Si al menos uno está seleccionado, es válido
+      if ((viajeIda?.value && viajeIda.value !== '') || (viajeRetorno?.value && viajeRetorno.value !== '')) {
+        return null; // Válido
+      }
+
+      // Si ninguno está seleccionado, retorna error
+      return { 'noViajeSelected': true };
+    };
+  }
+
+  // Método para deshabilitar/habilitar selectores según la selección
+  onViajeIdaChange(): void {
+    const viajeIda = this.viajeFormGroup.get('viajeIda');
+    const viajeRetorno = this.viajeFormGroup.get('viajeRetorno');
+
+    if (viajeIda?.value && viajeIda.value !== '') {
+      // Si se selecciona un viaje de ida, deshabilita retorno
+      viajeRetorno?.disable({ emitEvent: false });
+      viajeRetorno?.setValue(null, { emitEvent: false });
+    } else {
+      // Si se deselecciona ida, habilita retorno
+      viajeRetorno?.enable({ emitEvent: false });
+    }
+    this.viajeFormGroup.updateValueAndValidity();
+  }
+
+  onViajeRetornoChange(): void {
+    const viajeIda = this.viajeFormGroup.get('viajeIda');
+    const viajeRetorno = this.viajeFormGroup.get('viajeRetorno');
+
+    if (viajeRetorno?.value && viajeRetorno.value !== '') {
+      // Si se selecciona un viaje de retorno, deshabilita ida
+      viajeIda?.disable({ emitEvent: false });
+      viajeIda?.setValue(null, { emitEvent: false });
+    } else {
+      // Si se deselecciona retorno, habilita ida
+      viajeIda?.enable({ emitEvent: false });
+    }
+    this.viajeFormGroup.updateValueAndValidity();
+  }
 
   // Formularios
   passengerFormArray: FormArray<FormGroup> = this._formBuilder.array<FormGroup>([]);
@@ -428,8 +508,9 @@ if (event.previouslySelectedIndex === 4 && event.selectedIndex === 3) {
   });
 
   viajeFormGroup = this._formBuilder.group({
-    viaje: ['', [Validators.required]],
-  });
+    viajeIda: [''],
+    viajeRetorno: [''],
+  }, { validators: this.atLeastOneViajeValidator() });
 
   seats: {
     raw: string; number: string; status: string; asiento_id: number; top?: string; left?: string; 
@@ -615,7 +696,7 @@ paySeat() {
     return;
   }
 
-  
+  // Construir objeto de reserva  
   const reserva = {
     email: this.paymentFormGroup.get('email')?.value,
     cardInfo: {
@@ -624,8 +705,16 @@ paySeat() {
       cvv: this.paymentFormGroup.get('cvv')?.value
     },
     viajeId: this.selectedViaje.viaje_id,
-    from: 'Guatamela',
-    to: this.getSelectedRutaName().split(' - ')[0] || '',
+    // Ajustar origen/destino según la dirección del viaje (ida/retorno)
+    // rutaName: nombre de la ruta seleccionada (ej. "Ciudad - Destino")
+    // Por convención: Ida -> Origen: Guatemala, Destino: ruta seleccionada
+    // Retorno -> Origen: ruta seleccionada, Destino: Guatemala
+    from: ((this.selectedViaje as any)?.direccion === 'retorno')
+      ? (this.getSelectedRutaName().split(' - ')[0] || '')
+      : 'Guatemala',
+    to: ((this.selectedViaje as any)?.direccion === 'retorno')
+      ? 'Guatemala'
+      : (this.getSelectedRutaName().split(' - ')[0] || ''),
     fecha: this.thirdFormGroup.get('date')?.value,
    horario: this.selectedViaje?.fecha_salida,
     bus: this.getSelectedBusName(),
@@ -644,7 +733,6 @@ paySeat() {
 
   console.log('Enviando reserva:', reserva);
   
-
     // Enviar reserva al backend
     this.reservasService.crearReserva(reserva).subscribe({
       next: (response: any) => {
@@ -691,7 +779,7 @@ verReserva(reserva: any) {
   if (!reserva) {
     console.warn(' No hay reserva para mostrar.');
     return;
-  }
+  } 
 
   // Si tu reserva está en un arreglo, acepta el caso
   const res = Array.isArray(reserva) ? reserva[0] : reserva;
@@ -705,8 +793,10 @@ verReserva(reserva: any) {
     nombre: p.nombre ?? p.nombre_pasajero ?? p.name ?? '',
     dpi: p.dpi ?? p.id ?? p.dpi_pasajero ?? '',
     telefono: p.telefono ?? p.phone ?? '',
-    from: 'Guatemala',
-    to: this.getSelectedRutaName().split(' - ')[0] || '',
+    // Preferir los valores pasados en la reserva (res.from/res.to). Si no existen,
+    // derivar según la selección actual o usar valores por defecto.
+  from: res.from || (((this.selectedViaje as any)?.direccion) === 'retorno' ? (this.getSelectedRutaName().split(' - ')[0] || '') : 'Guatemala'),
+  to: res.to || (((this.selectedViaje as any)?.direccion) === 'retorno' ? 'Guatemala' : (this.getSelectedRutaName().split(' - ')[0] || '')),
     fecha: this.thirdFormGroup.get('date')?.value,
     horario: this.selectedViaje?.fecha_salida,
     asiento: p.asiento ?? p.seat ?? this.selectedSeats[index] ?? ''
@@ -717,6 +807,9 @@ verReserva(reserva: any) {
     email: res.email || this.paymentFormGroup.get('email')?.value || '',
     viajeId: this.selectedViaje?.viaje_id,
     ruta: this.getSelectedRutaName(),
+    // Incluir origen/destino en la reserva completa (preferir valores pasados)
+  from: res.from || (((this.selectedViaje as any)?.direccion) === 'retorno' ? (this.getSelectedRutaName().split(' - ')[0] || '') : 'Guatemala'),
+  to: res.to || (((this.selectedViaje as any)?.direccion) === 'retorno' ? 'Guatemala' : (this.getSelectedRutaName().split(' - ')[0] || '')),
     fecha: this.thirdFormGroup.get('date')?.value,
     horario: this.selectedViaje?.fecha_salida,
     pasajeros: boletos
@@ -737,7 +830,9 @@ verReserva(reserva: any) {
 
   // Obtiene el nombre del viaje seleccionado
   getSelectedViajeName(): string {
-    const viajeId = this.viajeFormGroup.get('viaje')?.value;
+    const viajeIda = this.viajeFormGroup.get('viajeIda')?.value;
+    const viajeRetorno = this.viajeFormGroup.get('viajeRetorno')?.value;
+    const viajeId = viajeIda || viajeRetorno;
     const viaje = this.availableViajes.find(v => v.viaje_id === Number(viajeId));
     return viaje ? `Viaje ${viaje.viaje_id} - Bus ${this.buses.find(b => b.bus_id === viaje.bus_id)?.placa}` : 'No seleccionado';
   }

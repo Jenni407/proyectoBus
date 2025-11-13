@@ -22,8 +22,8 @@ export class EmailService {
   enviarTicket(pdfFile: Blob, destinatario: string): Observable<any> {
     const formData = new FormData();
     formData.append('Destinatario', destinatario); // coincide con el backend
-    formData.append('Asunto', 'Tus boletos BusConnect'); // opcional
-    formData.append('Mensaje', 'Gracias por viajar con BusConnect'); // opcional
+    formData.append('Asunto', 'Tus boletos BusConnect'); 
+    formData.append('Mensaje', 'Gracias por viajar con BusConnect'); 
     formData.append('Archivo', pdfFile, 'boleto.pdf'); // coincide con el backend
   
     return this.http.post(`${this.apiUrl}/enviar`, formData);

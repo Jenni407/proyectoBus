@@ -1,4 +1,4 @@
-<div class="container print-area" *ngIf="pasajeros!.length > 0; else noReserva">
+<div class="container print-area" *ngIf="pasajeros && pasajeros.length > 0; else noReserva">
   <!-- Contenedor para exportar -->
   <div id="ticket-reserva">
     <mat-card class="ticket-reserva resumen-card" *ngFor="let pasajero of pasajeros">
@@ -31,7 +31,7 @@
     </mat-card>
   </div>
 
-  <div class="acciones-ticket" *ngIf="pasajeros!.length > 0">
+  <div class="acciones-ticket" *ngIf="pasajeros && pasajeros.length > 0">
     <button class ="button-boleto"(click)="descargarPDF()">
       <mat-icon>picture_as_pdf</mat-icon> Descargar PDF
     </button>
@@ -59,8 +59,8 @@
   </div>
 </ng-template>
 
-<div class="modal-fondo" *ngIf="mostrarModal">
-  <div class="modal-correo" [ngClass]="tipoModal">
+<div class="modal-overlay" *ngIf="mostrarModal">
+  <div class="modal-content" [ngClass]="tipoModal">
     <img 
       *ngIf="tipoModal === 'success'" 
       src="https://cdn-icons-gif.flaticon.com/14674/14674091.gif" 
@@ -74,7 +74,7 @@
       src="https://cdn-icons-gif.flaticon.com/11919/11919478.gif" 
       alt="Correo enviando" width="90">
 
-   <!-- Solo muestra el título si no es genérico -->
+   <!-- titulo -->
 <h2 *ngIf="tituloModal && tituloModal !== 'success' && tituloModal !== 'error' && tituloModal !== 'info'">
   {{ tituloModal }}
 </h2>

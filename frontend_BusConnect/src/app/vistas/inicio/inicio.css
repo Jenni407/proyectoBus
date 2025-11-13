@@ -1,8 +1,9 @@
 .inicio-container {
   width: 100%;
-  height: 90vh; /* altura completa de la ventana */
+  height: 80vh; /* Menor altura para evitar espacios grandes */
+  min-height: 60vh; 
   position: relative;
-  max-height: 900px; /* altura máxima para evitar que sea demasiado grande */
+  max-height: 700px; /* Altura máxima */
 }
 .inicio-container::before {
   content: "";
@@ -21,18 +22,19 @@
 
 /* Texto sobre la imagen */
 .bg-text {
-  background-color: #03275e; /*color de fondo*/
+  background-color: #03275e;
   font-weight: bold;
-  border: 3px ;
   border-radius: 10px;
   position: absolute;
-  top: 110%;
+  top: 100%; 
   left: 50%;
-  transform: translate(-50%, -110%);
+  transform: translate(-50%, -50%);
   z-index: 2;
-  width: 700px;
-  padding: 30px;
+  width: 90%; /* Usa porcentaje para adaptarse a la pantalla */
+  max-width: 700px; /* Máximo ancho para pantallas grandes */
+  padding: 20px;
   text-align: center;
+  box-sizing: border-box; /* para que el padding no aumente el width */
 }
 
 .bg-text h1 {
@@ -195,4 +197,19 @@
   text-align: justify;
   font-size: 1rem;
   color: #333;
+}
+
+@media (max-width: 768px) {
+  .bg-text {
+    width: 95%;
+    padding: 15px;
+    font-size: 1rem;
+  }
+  .bg-text h1 {
+    font-size: 1.8rem;
+    padding: 10px 0;
+  }
+  .bg-text p {
+    font-size: 1rem;
+  }
 }

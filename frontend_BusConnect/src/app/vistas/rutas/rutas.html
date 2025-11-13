@@ -13,7 +13,7 @@
     <div class = "info-card" *ngFor="let ruta of rutasVisibles">
         <img [src]="ruta.imagen" [alt]="ruta.titulo"/>
         <h3>{{ ruta.titulo}}</h3>
-        <p><b>Duración:</b> {{ruta.duracion}}</p>
+        <p><b>Duración:</b> {{ruta.duracion}}</p> 
         <p><b>Salidas</b> {{ruta.salidas}}</p>
         <p><b>Sevicios:</b> {{ruta.servicios}}</p>
         <button
@@ -22,7 +22,14 @@
         (click)="irAComprar(ruta)"
       >
         Comprar Boleto
-      </button>
+      </button> 
+      <button
+      mat-raised-button
+      class="button-boleto"
+      (click)="verVideo(ruta)"
+    >
+   Ver Ruta en Video
+    </button> 
     </div>
   </div>
 

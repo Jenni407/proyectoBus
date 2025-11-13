@@ -1,9 +1,12 @@
 .main-content {
   padding: 20px;
+  margin: 0 auto;
+  flex: 1;
 }
 .section-title{
   text-align: center;
-  color: #0d47a1
+  color: #0d47a1;
+  margin-top: 70px;
 }
 
 .info-grid {
@@ -11,8 +14,8 @@
   flex-direction: row; /* acomoda los elementos en fila horizontal */
   gap: 20px;
   justify-content: center;
-  align-items: stretch;
-  height: 100%;
+  align-items:flex-start;
+  height: auto;
   flex-wrap: wrap; /* evita que se bajen a otra línea */
   overflow: visible; /* evita scroll vertical si se salen */
   opacity: 1;
@@ -41,10 +44,6 @@
 .info-card:hover {
   transform: translateY(-5px);
 }
-
-.rotateY:hover {
-  transform: rotateY(360deg);
-  }
   
 .info-card img {
   display: block;
@@ -57,7 +56,7 @@
 
 
 mat-card.carousel-card {
-  padding: 30px;
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: #ffffff;
@@ -70,6 +69,8 @@ flex-direction: row; /*acomoda de izquierda a derecha*/
 align-items: center; /*alinea los elementos verticalmente centrado*/
 justify-content: center;
 gap: 10px;/*espacio entre los elementos*/
+flex-wrap: wrap;
+
 }
 
 .carousel-button {
@@ -87,10 +88,16 @@ gap: 10px;/*espacio entre los elementos*/
   background-color:  #03275e;
   color:#ffffff; 
   text-align: center;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 5px;
 }
+
 .info-card button.button-boleto:hover {
   background-color: #0d47a1;
 }
+
 
 @media (max-width: 768px) {
   .info-card {
@@ -98,3 +105,15 @@ gap: 10px;/*espacio entre los elementos*/
     max-width: 400px;
   }
 }
+
+/* Debug visual */
+:host {
+  display: block;
+  min-height: auto; /* evita forzar altura completa */
+  height: auto; 
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+

@@ -110,7 +110,7 @@
   color: #3f51b5; /* color azul Material */
 }
 
-/* estilo ticket*/
+/* ticket*/
 
 .print-area {
   width: 100%;
@@ -121,7 +121,7 @@
   align-items: center;
   justify-content: center;
   gap: 30px; /* espacio entre tarjetas */
-  background-color: #e9f0f7;;
+  background-color: #e9f0f7;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -181,56 +181,55 @@
   }
 }
 
-.modal-fondo {
+/* ===== Modal de alerta centrado ===== */
+.modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* oscurece el fondo */
+  backdrop-filter: blur(4px); /* desenfoque del fondo */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 9999; /* para estar por encima de todo */
 }
 
-.modal-correo {
-  background: #fff;
-  border-radius: 12px;
+/* Caja del modal */
+.modal-content {
+  background: white;
+  border-radius: 10px;
   padding: 25px 35px;
+  max-width: 400px;
   text-align: center;
-  width: 320px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-  animation: pop 0.3s ease;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-out;
 }
 
-.modal-correo h2 {
-  margin: 10px 0 5px;
-  font-size: 1.5em;
+/* Títulos y colores por tipo */
+.modal-content.success {
+  border-top: 5px solid #4CAF50;
+}
+.modal-content.error {
+  border-top: 5px solid #F44336;
+}
+.modal-content.info {
+  border-top: 5px solid #2196F3;
 }
 
-.modal-correo p {
-  color: #555;
-  margin-bottom: 15px;
-}
-
-.modal-correo.success { border-top: 5px solid #2ecc71; }
-.modal-correo.error { border-top: 5px solid #e74c3c; }
-.modal-correo.info { border-top: 5px solid #3498db; }
-
-.button-boleto {
-  background-color: #1a437c;
-  color: #fff;
+/* Botón de cerrar */
+.modal-content button {
+  margin-top: 20px;
+  background: #25476a;
+  color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 8px 16px;
+  border-radius: 5px;
   cursor: pointer;
-  font-weight: bold;
 }
 
-.button-boleto:hover {
-  background-color: #163867;
-}
-
-@keyframes pop {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }

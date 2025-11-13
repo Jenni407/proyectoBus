@@ -10,6 +10,9 @@ export interface Viaje {
   fecha_salida: string;
   fecha_llegada_estimada: string;
   estado: string;
+  displayLabel?: string; 
+  // Dirección calculada en el cliente: 'ida' | 'retorno'
+  direccion?: 'ida' | 'retorno';
 }
 
 @Injectable({
@@ -22,4 +25,4 @@ export class ViajesService {
   getViajes(rutaId: number, fecha: string): Observable<any[]> {
     return this.http.get<any[]>(`${environment.apiUrl}/viajes?rutaId=${rutaId}&fecha=${fecha}`);
   }
-}
+} 

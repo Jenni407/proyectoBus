@@ -1,12 +1,10 @@
-import { Component,  OnInit, AfterViewInit} from '@angular/core';
+import { Component,  OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { EmailService } from '../../services/email';
-// @ts-ignore
-import html2pdf from 'html2pdf.js';
 
 @Component({
   selector: 'app-reservas',
@@ -27,13 +25,16 @@ export class Reservas implements OnInit {
   correo: string = '';
   correoPasajero: string = ''; // Agregada para compatibilidad con reenviar y enviarPDFPorCorreo()
 
-mostrarModal =false;
-tituloModal ='';
-mensajeModal ='';
-tipoModal: 'success'|'error'|'info' ='info';
-enviandoCorreo = false; //  Nueva bandera para evitar duplicar “Enviando correo…
+  mostrarModal = false;
+  tituloModal = '';
+  mensajeModal = '';
+  tipoModal: 'success' | 'error' | 'info' = 'info';
+  enviandoCorreo = false; //  Nueva bandera para evitar duplicar "Enviando correo…"
 
-constructor(private router: Router, private emailService: EmailService) {
+  private cdr: ChangeDetectorRef;
+
+  constructor(private router: Router, private emailService: EmailService, cdr: ChangeDetectorRef) {
+    this.cdr = cdr;
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras?.state;
 
@@ -73,6 +74,7 @@ constructor(private router: Router, private emailService: EmailService) {
     this.mensajeModal = mensaje;
     this.tipoModal = tipo;
     this.mostrarModal = true;
+    this.cdr.detectChanges();
   }
 
   /*Descargar PDF normalmente */
@@ -102,7 +104,7 @@ constructor(private router: Router, private emailService: EmailService) {
   }
 
   /** Generar el PDF y opcionalmente enviarlo por correo */
-  private generarPDF(enviarCorreo: boolean = false): void {
+  private async generarPDF(enviarCorreo: boolean = false): Promise<void> {
     const tickets = document.querySelectorAll<HTMLElement>('.ticket-reserva');
 
     if (!tickets.length) {
@@ -167,48 +169,59 @@ constructor(private router: Router, private emailService: EmailService) {
 
     document.body.appendChild(contenedorPDF);
 
-    html2pdf()
-      .set(opciones)
-      .from(contenedorPDF)
-      .outputPdf('blob')
-      .then((pdfBlob: Blob) => {
-        document.body.removeChild(contenedorPDF);
+    // Cargar html2pdf.js dinámicamente para evitar inclusión ESM/CommonJS en el bundle
+    let pdfBlob: Blob | null = null;
+    try {
+      const module = await import('html2pdf.js');
+      const html2pdfFunc = (module as any).default ?? (module as any);
+      pdfBlob = await html2pdfFunc().set(opciones).from(contenedorPDF).outputPdf('blob');
+    } catch (err) {
+      document.body.removeChild(contenedorPDF);
+      this.mostrarAlerta(' Error al generar el PDF. Intenta nuevamente.', 'error');
+      return;
+    }
 
-        //  Si solo es descarga local
-        if (!enviarCorreo) {
-          const link = document.createElement('a');
-          link.href = URL.createObjectURL(pdfBlob);
-          link.download = `boletos_busconnect_${new Date().toISOString().split('T')[0]}.pdf`;
-          link.click();
-          return;
-        }
+    // si no se generó el pdf por alguna razón
+    if (!pdfBlob) {
+      document.body.removeChild(contenedorPDF);
+      this.mostrarAlerta(' Error al generar el PDF. Intenta nuevamente.', 'error');
+      return;
+    }
 
-        //  Si es envío de correo
-        if (!this.correoPasajero) {
-          const correoIngresado = prompt('Ingresa tu correo para recibir los boletos por email:')?.trim();
-          if (!correoIngresado) {
-            this.mostrarAlerta('No se envió el correo, falta dirección.', 'error');
-            return;
-          }
-          this.correoPasajero = correoIngresado;
-        }
+    document.body.removeChild(contenedorPDF);
 
-        this.enviarCorreo(pdfBlob, this.correoPasajero);
-      })
-      .catch(() => {
-        document.body.removeChild(contenedorPDF);
-        this.mostrarAlerta(' Error al generar el PDF. Intenta nuevamente.', 'error');
-      });
+    //  Si solo es descarga local
+    if (!enviarCorreo) {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(pdfBlob);
+      link.download = `boletos_busconnect_${new Date().toISOString().split('T')[0]}.pdf`;
+      link.click();
+      return;
+    }
+
+    //  Si es envío de correo
+    if (!this.correoPasajero) {
+      const correoIngresado = prompt('Ingresa tu correo para recibir los boletos por email:')?.trim();
+      if (!correoIngresado) {
+        this.mostrarAlerta('No se envió el correo, falta dirección.', 'error');
+        return;
+      }
+      this.correoPasajero = correoIngresado;
+    }
+
+    this.enviarCorreo(pdfBlob, this.correoPasajero);
   }
 
   /** Enviar PDF por correo */
   private enviarCorreo(pdfBlob: Blob, destinatario: string) {
     this.emailService.enviarTicket(pdfBlob, destinatario).subscribe({
       next: (res) => {
-        this.mostrarAlerta('Correo enviado',`El correo fue enviado correctamente a ${destinatario}.`, 'success');
+        this.mostrarAlerta('Correo enviado', `El correo fue enviado correctamente a ${destinatario}.`, 'success');
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        this.mostrarAlerta('Error','Error al enviar el correo. Puedes intentar reenviarlo.', 'error');
+        this.mostrarAlerta('Error', 'Error al enviar el correo. Puedes intentar reenviarlo.', 'error');
+        this.cdr.detectChanges();
       }
     });
   }
