@@ -199,6 +199,39 @@
   color: #333;
 }
 
+/* Sección del video corporativo */
+.empresa-video {
+  background-color: #fff;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.h2-empresa-video {
+ 
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  color: #003E99;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+.icono-video {
+  font-size: 1.6rem;
+}
+
+.video-empresa {
+  width: 100%;
+  max-width: 800px;
+  height: 450px;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .bg-text {
     width: 95%;

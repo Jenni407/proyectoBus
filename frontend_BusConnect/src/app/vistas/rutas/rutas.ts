@@ -53,7 +53,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '3 horas',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/y7Lq65snej4?feature=share'
+      video: 'https://youtu.be/PNzEkvjEDaE'
     },
     {
       titulo: 'Ciudad de Guatemala – San Marcos',
@@ -61,7 +61,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '4 horas',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/zIFLowSiMBA?feature=share'
+      video: 'https://youtu.be/zmI9rO8k99Q'
     },
     {
       titulo: 'Ciudad de Guatemala – Huehuetenango',
@@ -69,7 +69,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '6 horas',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video:'https://youtube.com/shorts/pOHXZZs-XWQ?si=wloZsy6xos6-_e7A'
+      video:'https://youtu.be/xNNzvPtxFUg'
     },
     {
       titulo: 'Ciudad de Guatemala – Izabal',
@@ -77,7 +77,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '7 horas',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video:'https://youtube.com/shorts/60bsE_aaW40?si=0XtvrYqfgk9i0wzt'
+      video:'https://youtu.be/KbKhwpqXQAo'
     },
     {
       titulo: 'Ciudad de Guatemala – Retalhuleu',
@@ -85,7 +85,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '3 horas',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/4r8szQ9-JBY?feature=share'
+      video: 'https://youtu.be/bQfUTcRPRhY'
     },
     {
       titulo: 'Ciudad de Guatemala – Chiquimula',
@@ -93,7 +93,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '3 horas',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video:'https://youtube.com/shorts/l1g9TbNe-N4?si=61XN6ACyRk0cPabU'
+      video:'https://youtu.be/cx3Ht4muSPk'
     },
     {
       titulo: 'Ciudad de Guatemala – Jutiapa',
@@ -101,7 +101,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '2 horas',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/49g1Z3hkLow?si=CDl0gYlH2c_9-FFS'
+      video: 'https://youtu.be/bBZmK_imAUI'
     },
     {
       titulo: 'Ciudad de Guatemala – Zacapa',
@@ -109,7 +109,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '2 horas y media',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/DsXBFCp4atw?feature=share'
+      video: 'https://youtu.be/IzO4yrBCqhE'
     },
     {
       titulo: 'Ciudad de Guatemala – El Progreso',
@@ -117,7 +117,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '1 hora con 45 minutos',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/IsFoAcO_43M?si=aUom4N6AeATJyjAD'
+      video: 'https://youtu.be/ZCw5C6U9us4'
     },
     {
       titulo: 'Ciudad de Guatemala – Baja Verapaz',
@@ -125,7 +125,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '3 horas',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/BsciFTa6mJo?si=s2lhiok9mNq7_5LP'
+      video: 'https://youtu.be/voj4GmzqdeA'
     },
     {
       titulo: 'Ciudad de Guatemala – Alta Verapaz',
@@ -133,7 +133,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '3 horas y media',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video:'https://youtu.be/1e4yy_DrwDo?si=0CI_xIcSj47e7Uq-'
+      video:'https://youtu.be/1e4yy_DrwDo'
     },
     {
       titulo: 'Ciudad de Guatemala – Santa Rosa',
@@ -141,7 +141,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '3 horas de camino',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/GdStzMCXn8k?feature=share'
+      video: 'https://youtu.be/KBOAzGWAl8w'
     },
 
     {
@@ -150,7 +150,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '1 hora de camino',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/OprLQoPvY_w?si=vqHM_HEbzEeS39zc'
+      video: 'https://youtu.be/0lJTr7O086g'
     },
     {
       titulo: 'Ciudad de Guatemala – Chimaltenango',
@@ -158,7 +158,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '1 hora de camino',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/YlaYVehROQg?si=jFi2F_A7lEceg55c'
+      video: 'https://youtu.be/Z-RF5yRbWzE'
     },
     {
       titulo: 'Ciudad de Guatemala – Totonicapan',
@@ -166,7 +166,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '2 hora de camino',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/p5RP6Og-90o?feature=share'
+      video: 'https://youtu.be/h4mou88QXeQ'
     },
     {
       titulo: 'Ciudad de Guatemala – Petén',
@@ -174,7 +174,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '8 horas de camino',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/tS7ne3wYkWk?si=LDmOQMBxpTzFw3gi'
+      video: 'https://youtu.be/CN28FJlvFH0'
     },
     {
       titulo: 'Ciudad de Guatemala – Quetzaltenango',
@@ -182,7 +182,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '2 horas de camino',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/_wR8o6tSWiA?feature=share'
+      video: 'https://youtu.be/rM1teRGH8sY'
     },
     {
       titulo: 'Ciudad de Guatemala – Sololá',
@@ -190,7 +190,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '3 horas con 45 minutos de camino',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video:'https://youtube.com/shorts/0yFwUF_otys?feature=share'
+      video:'https://youtu.be/RoxrzPM7SuQ'
     },
     {
       titulo: 'Ciudad de Guatemala – Sacatepéquez',
@@ -198,7 +198,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '30 minutos de camino',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/KKjzMMGrZUY?feature=share'
+      video: 'https://youtu.be/5G8UPo1ni24'
     },
     {
       titulo: 'Ciudad de Guatemala – Suchitepéquez',
@@ -206,7 +206,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '2 horas con 45 minutos de camino',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video:'https://youtube.com/shorts/mQYAc8Q-uYo?feature=share'
+      video:'https://youtu.be/bjik7UfC6Vc'
     },
     {
       titulo: 'Ciudad de Guatemala – Jalapa',
@@ -214,7 +214,7 @@ export class Rutas implements OnInit, OnDestroy {
       duracion: '2 horas de camino',
       salidas: 'Cada 2 horas, de 5:00 a.m. a 8:00 p.m.',
       servicios: 'Wi-Fi, asientos reclinables, aire acondicionado',
-      video: 'https://youtube.com/shorts/Dbd0hxc4mEc?si=yDjIOaAqEKFNQ-sm'
+      video: 'https://youtu.be/NQ3MmVVoN7I'
     }
 
   ];
