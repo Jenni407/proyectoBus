@@ -479,6 +479,9 @@ button {
 button:hover {
   background-color: #0846a3;
 }
+::ng-deep .mat-step-header {
+  pointer-events: none !important;
+}
 
 /* Estilos para Viajes de Ida y Retorno */
 .viajes-section {

@@ -188,6 +188,7 @@ export class Boletos implements OnInit {
     this.fetchRutas();
     this.fetchBuses();
   }
+
 // PASO DE FECHA (Tercer Formulario)
   onDateNext(animate = false) {
 
@@ -491,7 +492,7 @@ formatExpiry(event: any): void {
     passengers: this.passengerFormArray
   });
 
-  countdown = '01:00';  // inicaliza el temporizador
+  countdown = '02:00';  // inicaliza el temporizador
   paymentConfirmed = false;
   timerInterval: any;
 
@@ -589,7 +590,7 @@ paymentFormGroup = this._formBuilder.group({
 });
   // Temporizador
   startCountdown() {
-    let total = 1 * 60; // 5 minutos en segundos
+    let total = 2 * 60; // 5 minutos en segundos
     clearInterval(this.timerInterval); // Limpia cualquier temporizador previo
     this.countdown = this.formatTime(total); // muestra el tiempo inicial
 
@@ -875,7 +876,7 @@ verReserva(reserva: any) {
       if (seat.status === 'selected') seat.status = 'available';
     });
   }
-  isLinear = false;
+  isLinear = true;
 
   minDate = new Date(); 
 }
