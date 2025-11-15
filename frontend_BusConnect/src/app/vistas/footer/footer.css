@@ -89,6 +89,16 @@
   color: #FF0000;
 }
 
+.footer mat-icon {
+  font-size: 20px;
+  height: 22px;
+  width: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
 /* Hover */
 .social-icons i:hover {
   filter: brightness(1.2);

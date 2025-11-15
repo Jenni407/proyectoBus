@@ -1,4 +1,3 @@
-
 /* estilos generales para la vista de boletos */
 .main-content {
   position: relative;
@@ -34,7 +33,7 @@
   width: 100%;
   max-width: 872px;
   margin: 0 auto;
-  animation: bounceBus 5s infinite linear;
+  animation: bounceBus 4s infinite ease-in-out;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -43,7 +42,7 @@
 
 @keyframes bounceBus {
   0% { transform: translateX(0); }
-  50% { transform: translateX(10px); }
+  50% { transform: translateX(15px); }
   100% { transform: translateX(0); }
 }
 
@@ -210,14 +209,14 @@
 
 /* Caja individual de cada boleto */
 .ticket-wrapper {
-  background: #fff;
-  border: 2px dashed #555;
+  background: linear-gradient(135deg, #ffffff, #e6f7ff);
+  border: 2px solid #007acc;
   border-radius: 12px;
   padding: 20px;
   margin: 20px auto;
   max-width: 600px;
   font-family: 'Courier New', monospace;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
 /* Encabezado del boleto */
@@ -228,7 +227,7 @@
   border-bottom: 1px solid #ccc;
   padding-bottom: 10px;
   margin-bottom: 15px;
-  color: #2c3e50;
+  color: #00509e;
 }
 
 .ticket-info {
@@ -412,19 +411,16 @@ mat-form-fiel.control-compact {
 }
 
 .bus-animation-img {
-  animation: moveBus 3s ease-out forwards;
+  animation: moveBus 2.5s ease-in-out forwards;
   width: 200px;
 }
 
 @keyframes moveBus {
   0% {
-    transform: translateX(-200px);
-    opacity: 0.3;
+    transform: translateX(-250px);
+    opacity: 0;
   }
-  20% {
-    opacity: 1;
-  }
-  80% {
+  50% {
     opacity: 1;
   }
   100% {

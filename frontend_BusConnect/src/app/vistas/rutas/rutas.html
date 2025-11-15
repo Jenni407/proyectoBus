@@ -1,46 +1,36 @@
-<div class = main-content>
+<div class="main-content">
   <h2 class="section-title">Descubre nuestras rutas</h2>
 
-<mat-card class="carousel-card">
-<div class ="Carousel-controls">
-  
-    <!-- Botón izquierdo -->
-  <button mat-icon-button class="carousel-button" (click)="prev()">
-    <mat-icon>chevron_left</mat-icon>
-  </button>
+  <mat-card class="carousel-card">
+    <div class="carousel-controls">
+      <!-- Botón izquierdo -->
+      <button mat-icon-button class="carousel-button" (click)="prev()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
 
-  <div class="info-grid" [class.fade-out]="fade">
-    <div class = "info-card" *ngFor="let ruta of rutasVisibles">
-        <img [src]="ruta.imagen" [alt]="ruta.titulo"/>
-        <h3>{{ ruta.titulo}}</h3>
-        <p><b>Duración:</b> {{ruta.duracion}}</p> 
-        <p><b>Salidas</b> {{ruta.salidas}}</p>
-        <p><b>Sevicios:</b> {{ruta.servicios}}</p>
-        <button
-        mat-raised-button
-        class="button-boleto"
-        (click)="irAComprar(ruta)"
-      >
-        Comprar Boleto
-      </button> 
-      <button
-      mat-raised-button
-      class="button-boleto"
-      (click)="verVideo(ruta)"
-    >
-   Ver Ruta en Video
-    </button> 
+      <div class="info-grid" [class.fade-out]="fade">
+        <div class="info-card" *ngFor="let ruta of rutasVisibles">
+          <img [src]="ruta.imagen" [alt]="ruta.titulo" class="ruta-img" />
+          <h3>{{ ruta.titulo }}</h3>
+          <p><b>Duración:</b> {{ ruta.duracion }}</p>
+          <p><b>Salidas:</b> {{ ruta.salidas }}</p>
+          <p><b>Servicios:</b> {{ ruta.servicios }}</p>
+          <button mat-raised-button class="button-boleto" (click)="irAComprar(ruta)">
+            Comprar Boleto
+          </button>
+          <button mat-raised-button class="button-boleto" (click)="verVideo(ruta)">
+            Ver Ruta en Video
+          </button>
+        </div>
+      </div>
+
+      <!-- Botón derecho -->
+      <button mat-icon-button class="carousel-button" (click)="next()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
     </div>
-  </div>
-
-  <!-- Botón derecho -->
-  <button mat-icon-button class="carousel-button" (click)="next()">
-    <mat-icon>chevron_right</mat-icon>
-  </button>
-</div>
-</mat-card>
+  </mat-card>
 </div>
 
 
 
-     
