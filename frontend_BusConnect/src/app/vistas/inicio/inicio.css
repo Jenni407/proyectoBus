@@ -220,15 +220,30 @@
   font-size: 1.6rem;
 }
 
-.video-empresa {
+.video-wrapper {
+  position: relative;
   width: 100%;
   max-width: 800px;
-  height: 450px;
-  border: none;
+  margin: 0 auto;
+  overflow: hidden;
   border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
+/* Mantiene proporción 16:9 */
+.video-wrapper::before {
+  content: "";
+  display: block;
+  padding-top: 56.25%;
+}
+
+.video-empresa {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
 
 
 /* Responsive Design */
@@ -244,5 +259,11 @@
   }
   .bg-text p {
     font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .video-empresa {
+    max-width: 100%;
   }
 }
